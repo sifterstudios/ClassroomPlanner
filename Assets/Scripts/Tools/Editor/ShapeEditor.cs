@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -51,13 +52,18 @@ namespace Sifter.Tools
             Vector3 mousePosition = mouseRay.GetPoint((dstToDrawPlane));
 
             if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0 &&
+                guiEvent.modifiers == EventModifiers.Shift)
+            {
+                HandleShiftLeftMouseDown(mousePosition);
+            }
+
+            if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0 &&
                 guiEvent.modifiers == EventModifiers.None)
             {
                 HandleLeftMouseDown(mousePosition);
             }
 
-            if (guiEvent.type == EventType.MouseUp && guiEvent.button == 0 &&
-                guiEvent.modifiers == EventModifiers.None)
+            if (guiEvent.type == EventType.MouseUp && guiEvent.button == 0)
             {
                 HandleLeftMouseUp(mousePosition);
             }
@@ -68,37 +74,55 @@ namespace Sifter.Tools
                 HandleLeftMouseDrag(mousePosition);
             }
 
+
             if (!_selectionInfo.MouseIsOverPoint) UpdateMouseOverInfo(mousePosition);
-            
+        }
+
+        void SelectShapeUnderMouse()
+        {
+            if (_selectionInfo.MouseOverShapeIndex != -1)
+            {
+                _selectionInfo.SelectedShapeIndex = _selectionInfo.MouseOverShapeIndex;
+                _needsRepaint = true;
+            }
         }
 
         void Draw()
         {
-            for (int i = 0; i < _shapeCreator._points.Count; i++)
+            for (int shapeIndex = 0; shapeIndex < _shapeCreator.Shapes.Count; shapeIndex++)
             {
-                Vector3 nextPoint = _shapeCreator._points[(i + 1) % _shapeCreator._points.Count];
-                if (i == _selectionInfo.LineIndex)
-                {
-                    Handles.color = Color.red;
-                    Handles.DrawLine(_shapeCreator._points[i], nextPoint);
-                }
-                else
-                {
-                    Handles.color = Color.black;
-                    Handles.DrawDottedLine(_shapeCreator._points[i], nextPoint, 4);
-                }
+                Shape shapeToDraw = _shapeCreator.Shapes[shapeIndex];
+                bool shapeIsSelected = shapeIndex == _selectionInfo.SelectedShapeIndex;
+                Color deselectedShapeColor = Color.gray;
+                bool mouseIsOverShape = shapeIndex == _selectionInfo.MouseOverShapeIndex;
 
-                if (i == _selectionInfo.PointIndex)
+
+                for (int i = 0; i < shapeToDraw._points.Count; i++)
                 {
-                    Handles.color = (_selectionInfo.PointIsSelected) ? Color.black : Color.red;
-                }
-                else
-                {
+                    Vector3 nextPoint = shapeToDraw._points[(i + 1) % shapeToDraw._points.Count];
+                    if (i == _selectionInfo.LineIndex && mouseIsOverShape)
+                    {
+                        Handles.color = Color.red;
+                        Handles.DrawLine(shapeToDraw._points[i], nextPoint);
+                    }
+                    else
+                    {
+                        Handles.color = (shapeIsSelected) ? Color.black : deselectedShapeColor;
+                        Handles.DrawDottedLine(shapeToDraw._points[i], nextPoint, 4);
+                    }
+
+                    if (i == _selectionInfo.PointIndex && mouseIsOverShape)
+                    {
+                        Handles.color = (_selectionInfo.PointIsSelected) ? Color.black : Color.red;
+                    }
+                    else
+                    {
+                        Handles.color = (shapeIsSelected) ? Color.white : deselectedShapeColor;
+                    }
+
                     Handles.color = Color.white;
+                    Handles.DrawSolidDisc(shapeToDraw._points[i], Vector3.up, _shapeCreator.HandleRadius);
                 }
-
-                Handles.color = Color.white;
-                Handles.DrawSolidDisc(_shapeCreator._points[i], Vector3.up, _shapeCreator.HandleRadius);
             }
 
             _needsRepaint = false;
@@ -108,23 +132,38 @@ namespace Sifter.Tools
         {
             _shapeCreator = target as ShapeCreator;
             _selectionInfo = new SelectionInfo();
+            Undo.undoRedoPerformed += OnUndoOrRedo;
+        }
+
+        void OnDisable()
+        {
+            Undo.undoRedoPerformed -= OnUndoOrRedo;
         }
 
         void UpdateMouseOverInfo(Vector3 mousePosition)
         {
             int mouseOverPointIndex = -1;
+            int mouseOverShapeindex = -1;
 
-            for (int i = 0; i < _shapeCreator._points.Count; i++)
+            for (int shapeIndex = 0; shapeIndex < _shapeCreator.Shapes.Count; shapeIndex++)
             {
-                if (Vector3.Distance(mousePosition, _shapeCreator._points[i]) < _shapeCreator.HandleRadius)
+                Shape currentShape = _shapeCreator.Shapes[shapeIndex];
+
+                for (int i = 0; i < currentShape._points.Count; i++)
                 {
-                    mouseOverPointIndex = i;
-                    break;
+                    if (Vector3.Distance(mousePosition, currentShape._points[i]) < _shapeCreator.HandleRadius)
+                    {
+                        mouseOverPointIndex = i;
+                        mouseOverShapeindex = shapeIndex;
+                        break;
+                    }
                 }
             }
 
-            if (mouseOverPointIndex != _selectionInfo.PointIndex)
+            if (mouseOverPointIndex != _selectionInfo.PointIndex ||
+                mouseOverShapeindex != _selectionInfo.MouseOverShapeIndex)
             {
+                _selectionInfo.MouseOverShapeIndex = mouseOverShapeindex;
                 _selectionInfo.PointIndex = mouseOverPointIndex;
                 _selectionInfo.MouseIsOverPoint = mouseOverPointIndex != -1;
 
@@ -140,21 +179,32 @@ namespace Sifter.Tools
             {
                 int mouseOverLineIndex = -1;
                 float closestLineDst = _shapeCreator.HandleRadius;
-                for (int i = 0; i < _shapeCreator._points.Count; i++)
+
+                for (int shapeIndex = 0; shapeIndex < _shapeCreator.Shapes.Count; shapeIndex++)
                 {
-                    Vector3 nextPointInShape = _shapeCreator._points[(i + 1) % _shapeCreator._points.Count];
-                    float dstFromMouseToLine =
-                        HandleUtility.DistancePointToLineSegment(mousePosition.ToXZ(), _shapeCreator._points[i].ToXZ(),
-                            nextPointInShape.ToXZ());
-                    if (dstFromMouseToLine < closestLineDst)
+                    Shape currentShape = _shapeCreator.Shapes[shapeIndex];
+
+
+                    for (int i = 0; i < currentShape._points.Count; i++)
                     {
-                        closestLineDst = dstFromMouseToLine;
-                        mouseOverLineIndex = i;
+                        Vector3 nextPointInShape = currentShape._points[(i + 1) % currentShape._points.Count];
+                        float dstFromMouseToLine =
+                            HandleUtility.DistancePointToLineSegment(mousePosition.ToXZ(),
+                                currentShape._points[i].ToXZ(),
+                                nextPointInShape.ToXZ());
+                        if (dstFromMouseToLine < closestLineDst)
+                        {
+                            closestLineDst = dstFromMouseToLine;
+                            mouseOverLineIndex = i;
+                            mouseOverPointIndex = shapeIndex;
+                        }
                     }
                 }
 
-                if (_selectionInfo.LineIndex != mouseOverLineIndex)
+                if (_selectionInfo.LineIndex != mouseOverLineIndex ||
+                    mouseOverShapeindex != _selectionInfo.MouseOverShapeIndex)
                 {
+                    _selectionInfo.MouseOverShapeIndex = mouseOverShapeindex;
                     _selectionInfo.LineIndex = mouseOverLineIndex;
                     _selectionInfo.MouseIsOverLine = mouseOverLineIndex != -1;
                     _needsRepaint = true;
@@ -162,30 +212,57 @@ namespace Sifter.Tools
             }
         }
 
+        void HandleShiftLeftMouseDown(Vector3 mousePosition)
+        {
+            CreateNewShape();
+            CreateNewPoint(mousePosition);
+        }
+
         void HandleLeftMouseDown(Vector3 mousePosition)
         {
-            if (!_selectionInfo.MouseIsOverPoint)
+            if (_shapeCreator.Shapes.Count == 0)
             {
-                int newPointIndex = (_selectionInfo.MouseIsOverLine)
-                    ? _selectionInfo.LineIndex + 1
-                    : _shapeCreator._points.Count;
-                Undo.RecordObject(_shapeCreator, "Add point");
-                _shapeCreator._points.Insert(newPointIndex, mousePosition);
-                _selectionInfo.PointIndex = newPointIndex;
+                CreateNewShape();
             }
 
-            _selectionInfo.PointIsSelected = true;
-            _selectionInfo.PositionAtStartOfDrag = mousePosition;
+            SelectShapeUnderMouse();
+
+            if (_selectionInfo.MouseIsOverPoint) SelectPointUnderMouse();
+            else CreateNewPoint(mousePosition);
+        }
+
+        void CreateNewPoint(Vector3 mousePosition)
+        {
+            bool mouseIsOverSelectedShape = _selectionInfo.MouseOverShapeIndex == _selectionInfo.SelectedShapeIndex;
+            int newPointIndex = (_selectionInfo.MouseIsOverLine && mouseIsOverSelectedShape)
+                ? _selectionInfo.LineIndex + 1
+                : selectedShape._points.Count;
+            Undo.RecordObject(_shapeCreator, "Add point");
+            selectedShape._points.Insert(newPointIndex, mousePosition);
+            _selectionInfo.PointIndex = newPointIndex;
+            _selectionInfo.MouseOverShapeIndex = _selectionInfo.SelectedShapeIndex;
             _needsRepaint = true;
+
+            SelectPointUnderMouse();
+        }
+
+        void SelectPointUnderMouse()
+        {
+            _selectionInfo.PointIsSelected = true;
+            _selectionInfo.MouseIsOverPoint = true;
+            _selectionInfo.MouseIsOverLine = false;
+            _selectionInfo.LineIndex = -1;
+
+            _selectionInfo.PositionAtStartOfDrag = selectedShape._points[_selectionInfo.PointIndex];
         }
 
         void HandleLeftMouseUp(Vector3 mousePosition)
         {
             if (_selectionInfo.PointIsSelected)
             {
-                _shapeCreator._points[_selectionInfo.PointIndex] = _selectionInfo.PositionAtStartOfDrag;
-                Undo.RecordObject(_shapeCreator,  "Move point");
-                _shapeCreator._points[_selectionInfo.PointIndex] = mousePosition;
+                selectedShape._points[_selectionInfo.PointIndex] = _selectionInfo.PositionAtStartOfDrag;
+                Undo.RecordObject(_shapeCreator, "Move point");
+                selectedShape._points[_selectionInfo.PointIndex] = mousePosition;
                 _selectionInfo.PointIsSelected = false;
                 _selectionInfo.PointIndex = -1;
                 _needsRepaint = true;
@@ -196,10 +273,29 @@ namespace Sifter.Tools
         {
             if (_selectionInfo.PointIsSelected)
             {
-                _shapeCreator._points[_selectionInfo.PointIndex] = mousePosition;
+                selectedShape._points[_selectionInfo.PointIndex] = mousePosition;
                 _needsRepaint = true;
             }
         }
+
+
+        void CreateNewShape()
+        {
+            Undo.RecordObject(_shapeCreator, "Create shape");
+            _shapeCreator.Shapes.Add(new Shape());
+            _selectionInfo.SelectedShapeIndex = _shapeCreator.Shapes.Count - 1;
+        }
+
+
+        void OnUndoOrRedo()
+        {
+            if (_selectionInfo.SelectedShapeIndex >= _shapeCreator.Shapes.Count)
+            {
+                _selectionInfo.SelectedShapeIndex = _shapeCreator.Shapes.Count - 1;
+            }
+        }
+
+        Shape selectedShape => _shapeCreator.Shapes[_selectionInfo.SelectedShapeIndex];
     }
 
     public class SelectionInfo
@@ -210,5 +306,7 @@ namespace Sifter.Tools
         public Vector3 PositionAtStartOfDrag;
         public int LineIndex = -1;
         public bool MouseIsOverLine;
+        public int SelectedShapeIndex;
+        public int MouseOverShapeIndex;
     }
 }
