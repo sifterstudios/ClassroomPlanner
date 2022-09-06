@@ -7,5 +7,7 @@ namespace Sifter
     public class ShapeCreator : MonoBehaviour
     {
         [HideInInspector] public List<Vector3> _points = new List<Vector3>();
+
+        public float HandleRadius = .5f;
     }
 }
