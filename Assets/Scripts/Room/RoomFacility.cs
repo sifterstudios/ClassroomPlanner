@@ -15,6 +15,8 @@
         ProTools,
         Sibelius,
         Bongos,
-        AcousticGuitars
+        AcousticGuitars,
+        BigStudio,
+        BandRoom
     }
 }
