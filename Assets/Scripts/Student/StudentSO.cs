@@ -8,6 +8,8 @@ namespace Sifter.Student
     {
         public string FirstName = "FirstName";
         public string LastName = "LastName";
+        public string Email = "Email";
+        public int PhoneNumber;
         public bool AccessibilityRequirement;
         public DegreeEnum Degree;
     }

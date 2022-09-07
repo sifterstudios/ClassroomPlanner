@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Sifter.Tools
 {
@@ -7,6 +8,11 @@ namespace Sifter.Tools
         public static Vector2 ToXZ(this Vector3 v3)
         {
             return new Vector2(v3.x, v3.z);
+        }
+
+        public static string GetWeekdayFromDate(DateTime date)
+        {
+            return date.ToString("dddd");
         }
     }
 }
