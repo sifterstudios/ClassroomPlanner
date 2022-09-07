@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85082f24abfd440ea899d60af2591798, type: 3}
   m_Name: PinkBandRoom
   m_EditorClassIdentifier: 
-  RoomName: GreenBandRoom
+  RoomName: PinkBandRoom
   RoomFacilities: 0f000000
   Floor: 7
