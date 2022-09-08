@@ -8,7 +8,6 @@ namespace Tests
 {
     public class excluded_dates
     {
-        // A Test behaves as an ordinary method
         [Test]
         public void can_add_date_to_list()
         {
