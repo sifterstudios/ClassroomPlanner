@@ -3,26 +3,34 @@ using System.Collections.Generic;
 
 namespace Sifter.Date
 {
-    public static class ExcludedDates
+    public class ExcludedDates : IExcludedDates
     {
-        public static List<DateTime> Excluded;
+        public List<DateTime> Excluded = new();
 
-        public static void Load()
+        public ExcludedDates()
+        {
+            exclusions = Excluded;
+        }
+
+        public List<DateTime> exclusions { get; set; }
+
+        public void Load()
         {
             Excluded = ES3.Load("ExcludedDates", Excluded);
         }
 
-        public static void Save()
+        public void Save()
         {
             ES3.Save("ExcludedDates", Excluded);
         }
 
-        public static void Add(DateTime date)
+        public void Add(DateTime date, List<DateTime> exclusions)
         {
             if (!Excluded.Contains(date)) Excluded.Add(date);
+            if (exclusions.Contains(date)) exclusions.Add(date);
         }
 
-        public static void AddRange(DateTime date, int numberOfDays)
+        public void AddRange(DateTime date, List<DateTime> exclusions, int numberOfDays)
         {
             numberOfDays--; // TODO: Check if the implementation uses zero-based counting or not
             for (var dateRange = 0; dateRange < numberOfDays; dateRange++)
@@ -33,12 +41,12 @@ namespace Sifter.Date
             }
         }
 
-        public static void Remove(DateTime date)
+        public void Remove(DateTime date, List<DateTime> exclusions)
         {
             if (Excluded.Contains(date)) Excluded.Remove(date);
         }
 
-        public static void RemoveRange(DateTime date, int numberOfDays)
+        public void RemoveRange(DateTime date, List<DateTime> exclusions, int numberOfDays)
         {
             numberOfDays--; // TODO: Check if the implementation uses zero-based counting or not
             for (var dateRange = 0; dateRange < numberOfDays; dateRange++)
