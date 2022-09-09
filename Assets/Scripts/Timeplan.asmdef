@@ -1,0 +1,16 @@
+{
+    "name": "Timeplan",
+    "rootNamespace": "",
+    "references": [
+        "GUID:34b6f1d9be89242b0b6e561d1525a5a6"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
