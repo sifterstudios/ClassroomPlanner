@@ -5,7 +5,6 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(ShapeCreator))]
-#if UNITY_EDITOR
 public class ShapeEditor : Editor
 {
     SelectionInfo selectionInfo;

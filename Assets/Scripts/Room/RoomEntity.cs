@@ -6,9 +6,6 @@ namespace Sifter.Room
     {
         [SerializeField] RoomSO _roomSO;
 
-        void Start()
-        {
-        }
 
         void OnValidate()
         {
