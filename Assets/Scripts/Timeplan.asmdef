@@ -1,6 +1,6 @@
 {
     "name": "Timeplan",
-    "rootNamespace": "",
+    "rootNamespace": "Sifter",
     "references": [
         "GUID:34b6f1d9be89242b0b6e561d1525a5a6"
     ],

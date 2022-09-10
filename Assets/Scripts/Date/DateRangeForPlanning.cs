@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace Sifter.Date
 {
@@ -7,10 +6,11 @@ namespace Sifter.Date
     {
         public static DateTime Start;
         public static DateTime End;
+
         public static void LoadRanges()
         {
             Start = ES3.Load("DateRangeStart", DateTime.Today);
-            End = ES3.Load("DateRangeEnd", DateTime.Today);
+            End = ES3.Load("DateRangeEnd", DateTime.Today.AddDays(7));
         }
 
         public static void SaveRanges()

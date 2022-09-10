@@ -4,7 +4,7 @@ using NUnit.Framework;
 using Sifter.Date;
 using Sifter.Tools;
 
-namespace Tests
+namespace Sifter.Tests.Date
 {
     public class excluded_dates
     {
@@ -76,13 +76,25 @@ namespace Tests
             ExcludedDates.RemoveRange(now, 5);
             Assert.AreEqual(0, ExcludedDates.Excluded.Count);
         }
-        
+
         [Test]
         public void can_load_from_storage()
         {
             var ed = Substitute.For<PersistenceConstants>();
             ExcludedDates.Load();
-            Assert.NotNull(ExcludedDates.Excluded);
+            Assert.Pass();
+        }
+
+        [Test]
+        public void grabs_constant()
+        {
+            Assert.That(ExcludedDates.ED == PersistenceConstants.ExcludedDates);
+        }
+
+        [Test]
+        public void datetime_list_is_initialized_upon_declaration()
+        {
+            Assert.IsNotNull(ExcludedDates.Excluded);
         }
     }
 }

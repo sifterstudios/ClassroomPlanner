@@ -7,7 +7,7 @@ namespace Sifter.Degree
     [CreateAssetMenu(fileName = "NewDegree", menuName = "_Entities/Degree")]
     public class DegreeSO : ScriptableObject
     {
-        public string FullName = "";
+        public DegreeEnum Degree;
         public List<SubjectSO> Subjects = new();
     }
 }
