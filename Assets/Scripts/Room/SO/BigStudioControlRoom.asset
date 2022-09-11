@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: BigStudioControlRoom
   m_EditorClassIdentifier: 
   RoomName: BigStudioControlRoom
-  RoomFacilities: 0f000000
+  RoomFacilities: 0f000000090000000a000000010000000e00000002000000050000000800000000000000
   Floor: 7

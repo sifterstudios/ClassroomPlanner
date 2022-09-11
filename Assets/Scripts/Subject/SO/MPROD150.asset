@@ -14,6 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SubjectName: Musikkproduksjon 1B
   DegreesTeachingThisSubject: 
-  RoomFacilityRequirements: 
-  ElectableBy:
-  - {fileID: 0}
+  RoomFacilityRequirements: 0e000000
+  ElectableBy: []

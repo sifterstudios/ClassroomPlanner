@@ -2,7 +2,9 @@
     "name": "Timeplan",
     "rootNamespace": "Sifter",
     "references": [
-        "GUID:34b6f1d9be89242b0b6e561d1525a5a6"
+        "GUID:f1e0e77fd5aa4d04093cc67ddd7eb031",
+        "GUID:e048eeec9bdb9d30448017b829deb3f6",
+        "GUID:4db1229c02f3f629bdd928353859c2b3"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

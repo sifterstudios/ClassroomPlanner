@@ -4,38 +4,38 @@ using Sifter.Tools;
 
 namespace Sifter.Date
 {
-    public class ExcludedDates : IExcludedDates
+    public static class ExcludedDates
     {
-        public static List<DateTime> Excluded = new();
         public const string ED = PersistenceConstants.ExcludedDates;
+        public static List<DateTime> Excluded;
 
-        public ExcludedDates()
-        {
-            Excluded = ES3.Load(ED, Excluded);
-        }
 
-        public void Save()
+        public static void Save()
         {
             ES3.Save(ED, Excluded);
         }
 
-        public void Add(DateTime date, List<DateTime> exclusions)
+        public static void Load()
         {
-            if (!Excluded.Contains(date)) Excluded.Add(date);
-            if (exclusions.Contains(date)) exclusions.Add(date);
+            Excluded = ES3.Load(ED, new List<DateTime>());
         }
 
-        public void AddRange(DateTime date, List<DateTime> exclusions, int numberOfDays)
+        public static void Add(DateTime date)
+        {
+            if (!Excluded.Contains(date)) Excluded.Add(date);
+        }
+
+        public static void AddRange(DateTime date, int numberOfDays)
         {
             for (var dateRange = 0; dateRange < numberOfDays; dateRange++) Excluded.Add(date.AddDays(dateRange));
         }
 
-        public void Remove(DateTime date, List<DateTime> exclusions)
+        public static void Remove(DateTime date)
         {
             if (Excluded.Contains(date)) Excluded.Remove(date);
         }
 
-        public void RemoveRange(DateTime date, List<DateTime> exclusions, int numberOfDays)
+        public static void RemoveRange(DateTime date, int numberOfDays)
         {
             for (var dateRange = 0; dateRange < numberOfDays; dateRange++) Excluded.Remove(date.AddDays(dateRange));
         }
