@@ -61,6 +61,7 @@ namespace Sifter.Tests.Date
         public void can_add_date_range()
         {
             var now = DateTime.Now;
+            ExcludedDates.Load();
             ExcludedDates.Excluded.Clear();
             ExcludedDates.AddRange(now, 5);
             Assert.AreEqual(5, ExcludedDates.Excluded.Count);

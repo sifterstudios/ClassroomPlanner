@@ -16,11 +16,16 @@ namespace Sifter.Subject
 #if UNITY_EDITOR
         void OnValidate()
         {
+            RenameIfSOAdded();
+        }
+
+        public void RenameIfSOAdded()
+        {
             if (_subjectSo != null) gameObject.name = _subjectSo.SubjectName;
         }
 
         [Button(ButtonSizes.Medium, ButtonStyle.FoldoutButton)]
-        void PopulateApplicableRooms()
+        public void PopulateApplicableRooms()
         {
             var allRooms = EditorExtensions.GetAllSOInstances<RoomSO>();
             foreach (var room in allRooms)
@@ -36,11 +41,11 @@ namespace Sifter.Subject
                 }
                 else if (_applicableRooms.Contains(room))
                 {
-                    SifterLog.Print($"{room} Has already been added to the list.");
+                    SifterLog.Error($"{room} Has already been added to the list.");
                 }
                 else
                 {
-                    SifterLog.Print($"{room} is NOT applicable.");
+                    SifterLog.Warning($"{room} is NOT applicable.");
                 }
             }
         }
