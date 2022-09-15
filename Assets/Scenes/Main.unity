@@ -1999,14 +1999,15 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 953862690}
         m_TargetAssemblyTypeName: Sifter.Import.CSV.CSVStudentImport, Timeplan
-        m_MethodName: PrintFirstCSVToConsole
-        m_Mode: 1
+        m_MethodName: AddCsvToAllStudents
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: /Users/thesifter/Library/Application Support/SifterStudios/NLA
+            Timeplan/4MPD101.csv
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &953862692
@@ -2555,7 +2556,6 @@ GameObject:
   - component: {fileID: 1134917979}
   - component: {fileID: 1134917978}
   - component: {fileID: 1134917977}
-  - component: {fileID: 1134917976}
   m_Layer: 5
   m_Name: UpdateCSV
   m_TagString: Untagged
@@ -2584,19 +2584,6 @@ RectTransform:
   m_AnchoredPosition: {x: -416, y: -234.75}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1134917976
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1134917974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5aa83aa1d2d8494894a8bd18047a1d8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _dropdown: {fileID: 0}
 --- !u!114 &1134917977
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2641,7 +2628,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1134917976}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Sifter.Import.CSV.CSVUpdateFilesFromPersistentDataPath,
           Timeplan
         m_MethodName: UpdateFiles
@@ -3325,6 +3312,7 @@ GameObject:
   - component: {fileID: 1423292054}
   - component: {fileID: 1423292053}
   - component: {fileID: 1423292052}
+  - component: {fileID: 1423292055}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -3352,8 +3340,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -416, y: -142}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -206.45615, y: -142}
+  m_SizeDelta: {x: 579.0877, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1423292052
 MonoBehaviour:
@@ -3447,6 +3435,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1423292050}
   m_CullTransparentMesh: 1
+--- !u!114 &1423292055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423292050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5aa83aa1d2d8494894a8bd18047a1d8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dropdown: {fileID: 1423292052}
 --- !u!1 &1428940141
 GameObject:
   m_ObjectHideFlags: 0

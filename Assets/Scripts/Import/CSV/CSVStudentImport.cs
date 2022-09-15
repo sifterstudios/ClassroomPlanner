@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Sifter.Degree;
 using Sifter.Tools;
+using Sifter.Tools.Logger;
 using UnityEngine;
 
 namespace Sifter.Import.CSV
@@ -23,6 +25,9 @@ namespace Sifter.Import.CSV
             var newStudents = ParseStudentCSV(_sheet);
             CheckForDuplicates(ref newStudents, _allStudents);
             ES3.Save(PersistenceConstants.AllStudents, _allStudents);
+
+            foreach (var student in newStudents)
+                SifterLog.Print(JsonConvert.SerializeObject(student, Formatting.Indented));
         }
 
         static void CheckForDuplicates(ref List<StudentStruct> newStudents, List<StudentStruct> allStudents)
@@ -40,15 +45,15 @@ namespace Sifter.Import.CSV
             for (var row = 2; row < sheet.RowCount; row++)
             {
                 var allData = sheet.GetCell<string>(0, row);
-                var splitData = allData.Split(',');
+                var splitData = allData.Split(';');
 
                 var newStudent = new StudentStruct
                 {
-                    FirstName = splitData[0],
-                    LastName = splitData[1],
-                    Email = splitData[2],
-                    PhoneNumber = int.Parse(splitData[3]),
-                    Degree = ParseStudentDegree(splitData[4])
+                    FirstName = splitData[2],
+                    LastName = splitData[3],
+                    Email = splitData[4],
+                    PhoneNumber = int.Parse(splitData[5]),
+                    Degree = ParseStudentDegree(splitData[6])
                 };
 
                 // TODO: Find way to gather info about accessibility, or scrap the feature
