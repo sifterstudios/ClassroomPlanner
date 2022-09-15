@@ -9,3 +9,4 @@ Uses the following 3rd party assets: (you need to import these yourself with you
 - Easy Save 3
 - Easy Flat GUI Pack
 - Unity3D-NSubstitute
+- LinqToCSV
