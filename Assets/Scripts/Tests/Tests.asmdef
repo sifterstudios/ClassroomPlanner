@@ -4,7 +4,9 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Timeplan"
+        "ES3",
+        "Timeplan",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [
         "Editor"
@@ -14,9 +16,8 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
-        "NSubstitute.dll",
         "Castle.Core.dll",
-        "ReportGeneratorMerged.dll"
+        "NSubstitute.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

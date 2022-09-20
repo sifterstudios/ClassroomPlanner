@@ -16,9 +16,12 @@ namespace Tests.Entities
             var sE = go.GetComponent<SubjectEntity>();
             var sSO = ScriptableObject.CreateInstance<SubjectSO>();
             sSO.SubjectName = "TheAwesomestName";
+            // go.name = sSO.SubjectName;
             sE._subjectSo = sSO;
             sE.RenameIfSOAdded();
-            Assert.AreEqual(sSO.SubjectName, go.name);
+            Assert.That(
+                sSO.SubjectName == go.name,
+                Is.True.After(delayInMilliseconds: 6000, pollingInterval: 100));
         }
 
         [Test]

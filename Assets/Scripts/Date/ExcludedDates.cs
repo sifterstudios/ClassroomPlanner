@@ -7,7 +7,7 @@ namespace Sifter.Date
     public static class ExcludedDates
     {
         public const string ED = PersistenceConstants.ExcludedDates;
-        public static List<DateTime> Excluded;
+        public static List<DateTime> Excluded = new ();
 
 
         public static void Save()
